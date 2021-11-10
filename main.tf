@@ -1,7 +1,9 @@
 terraform {
+  required_version = ">= 0.13"
   required_providers {
     libvirt = {
       source = "dmacvicar/libvirt"
+      version = "0.6.11"
     }
   }
 }
@@ -16,6 +18,8 @@ resource "libvirt_pool" "images" {
   path = var.disk-image-dir
 }
 
+# Add 'size' when we need more space. It must be used in conjuction with
+# 'growpart' in cloud-init as well.
 resource "libvirt_volume" "master-image" {
   name   = "k8s-tf-master"
   pool   = libvirt_pool.images.name
@@ -39,10 +43,6 @@ data "template_file" "network_config" {
   template = file("${path.module}/network_config.cfg")
 }
 
-# for more info about paramater check this out
-# https://github.com/dmacvicar/terraform-provider-libvirt/blob/master/website/docs/r/cloudinit.html.markdown
-# Use CloudInit to add our ssh-key to the instance
-# you can add also meta_data field
 resource "libvirt_cloudinit_disk" "commoninit" {
   name           = "commoninit.images"
   user_data      = data.template_file.user_data.rendered
