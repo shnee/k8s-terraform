@@ -35,19 +35,42 @@ resource "libvirt_volume" "worker-volumes" {
   count  = var.worker-nodes
 }
 
-data "template_file" "user_data" {
+data "template_file" "master-user-data" {
   template = file("${path.module}/cloud_init.cfg")
+  vars = {
+    admin-passwd = "${var.root-admin-passwd}"
+    admin-pub-key = "${var.root-admin-pub-key}"
+    hostname = "k8s-tf-master"
+  }
+}
+
+data "template_file" "worker-user-data" {
+  template = file("${path.module}/cloud_init.cfg")
+  vars = {
+    admin-passwd = "${var.root-admin-passwd}"
+    admin-pub-key = "${var.root-admin-pub-key}"
+    hostname = "k8s-tf-worker-${count.index}"
+  }
+  count = var.worker-nodes
 }
 
 data "template_file" "network_config" {
   template = file("${path.module}/network_config.cfg")
 }
 
-resource "libvirt_cloudinit_disk" "commoninit" {
-  name           = "commoninit.images"
-  user_data      = data.template_file.user_data.rendered
+resource "libvirt_cloudinit_disk" "master-init" {
+  name           = "k8s-tf-master-init"
+  user_data      = data.template_file.master-user-data.rendered
   network_config = data.template_file.network_config.rendered
   pool           = libvirt_pool.images.name
+}
+
+resource "libvirt_cloudinit_disk" "worker-init" {
+  name           = "k8s-tf-worker-${count.index}-init"
+  user_data      = element(data.template_file.worker-user-data.*.rendered, count.index)
+  network_config = data.template_file.network_config.rendered
+  pool           = libvirt_pool.images.name
+  count = var.worker-nodes
 }
 
 # Create the machine
@@ -56,10 +79,11 @@ resource "libvirt_domain" "master-domain" {
   memory = var.node-memory
   vcpu   = var.node-vcpus
 
-  cloudinit = libvirt_cloudinit_disk.commoninit.id
+  cloudinit = libvirt_cloudinit_disk.master-init.id
 
   network_interface {
     network_name = "default"
+    hostname     = "k8s-tf-master"
   }
 
   # IMPORTANT: this is a known bug on cloud images, since they expect a console
@@ -94,10 +118,11 @@ resource "libvirt_domain" "worker-domains" {
   memory = var.node-memory
   vcpu   = var.node-vcpus
 
-  cloudinit = libvirt_cloudinit_disk.commoninit.id
+  cloudinit = element(libvirt_cloudinit_disk.worker-init.*.id, count.index)
 
   network_interface {
     network_name = "default"
+    hostname     = "k8s-tf-worker-${count.index}"
   }
 
   # IMPORTANT: this is a known bug on cloud images, since they expect a console
