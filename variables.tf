@@ -44,7 +44,7 @@ variable "worker-nodes" {
   type        = number
 }
 
-variable "ubuntu-image" {
+variable "base-image" {
   default = "https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
 }
 
