@@ -51,8 +51,9 @@ resource "libvirt_domain" "nodes" {
   cloudinit = element(libvirt_cloudinit_disk.node-inits.*.id, count.index)
 
   network_interface {
-    network_name = "default"
-    hostname     = "${var.name-prefix}-${count.index}"
+    network_name   = "default"
+    hostname       = "${var.name-prefix}-${count.index}"
+    wait_for_lease = true
   }
 
   # IMPORTANT: this is a known bug on cloud images, since they expect a console

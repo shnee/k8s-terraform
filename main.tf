@@ -17,6 +17,8 @@ module "master-nodes" {
   pool-name = libvirt_pool.images.name
   name-prefix = "${var.vm-name-prefix}-master"
   num-nodes = var.master-nodes
+  node-memory = var.node-memory
+  node-vcpus = var.node-vcpus
   base-image = var.ubuntu-image
   root-admin-passwd = var.root-admin-passwd
   root-admin-pub-key = var.root-admin-pub-key
@@ -28,6 +30,8 @@ module "worker-nodes" {
   pool-name = libvirt_pool.images.name
   name-prefix = "${var.vm-name-prefix}-worker"
   num-nodes = var.worker-nodes
+  node-memory = var.node-memory
+  node-vcpus = var.node-vcpus
   base-image = var.ubuntu-image
   root-admin-passwd = var.root-admin-passwd
   root-admin-pub-key = var.root-admin-pub-key
@@ -38,4 +42,12 @@ resource "libvirt_pool" "images" {
   name = var.disk-image-pool-name
   type = "dir"
   path = var.disk-image-dir
+}
+
+output "master-ips" {
+  value = module.master-nodes.ips
+}
+
+output "worker-ips" {
+  value = module.worker-nodes.ips
 }
