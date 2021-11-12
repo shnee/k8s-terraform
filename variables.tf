@@ -15,7 +15,7 @@ variable "aws-subnet-cidr-block" {
 
 variable "aws-vpc-cidr-block" {
   default = "10.0.0.0/16"
-  description = "The address space to be used for this VPC."
+  description = "The address space to be used for the VPC that all the AWS nodes will be in."
 }
 
 variable "disk-image-dir" {

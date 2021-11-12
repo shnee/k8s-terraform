@@ -40,24 +40,33 @@ data "template_file" "node-user-datas" {
   count = var.master-nodes
 }
 
-resource "aws_instance" "test-node" {
-  ami                         = var.base-image
-  instance_type               = var.aws-ec2-instance-type
-  # key_name                    = aws_key_pair.debug1.key_name
-  associate_public_ip_address = true
-  subnet_id                   = module.aws-network.subnet.id
-  vpc_security_group_ids = [module.aws-network.default-security-group.id]
-  user_data = element(data.template_file.node-user-datas.*.rendered, count.index)
-  count                       = var.master-nodes
-
-  tags = {
-    Name = "${var.vm-name-prefix}-test"
-  }
+module "master-nodes" {
+  source             = "./modules/aws-nodes"
+  ami                = var.base-image
+  ec2-instance-type  = var.aws-ec2-instance-type
+  subnet-id          = module.aws-network.subnet.id
+  security-group-ids = [module.aws-network.default-security-group.id]
+  user-datas         = data.template_file.node-user-datas
+  num-nodes          = var.master-nodes
+  name-prefix        = "${var.vm-name-prefix}-master"
 }
 
-output "master-ips" {
-  value = aws_instance.test-node.*.public_ip
+module "worker-nodes" {
+  source             = "./modules/aws-nodes"
+  ami                = var.base-image
+  ec2-instance-type  = var.aws-ec2-instance-type
+  subnet-id          = module.aws-network.subnet.id
+  security-group-ids = [module.aws-network.default-security-group.id]
+  user-datas         = data.template_file.node-user-datas
+  num-nodes          = var.worker-nodes
+  name-prefix        = "${var.vm-name-prefix}-worker"
 }
+
+################################################################################
+# libvirt
+# To use the libvirt module, uncomment the libvirt modules/resources and comment
+# out the aws modules/resources.
+################################################################################
 
 # provider "libvirt" {
 #   uri = var.libvirt-connection-url
@@ -94,12 +103,16 @@ output "master-ips" {
 #   type = "dir"
 #   path = var.disk-image-dir
 # }
-# 
-# # TODO REM move to other file?
-# output "master-ips" {
-#   value = module.master-nodes.ips
-# }
-# 
-# output "worker-ips" {
-#   value = module.worker-nodes.ips
-# }
+
+################################################################################
+# end libvirt
+################################################################################
+
+# TODO REM move to other file?
+output "master-ips" {
+  value = module.master-nodes.ips
+}
+
+output "worker-ips" {
+  value = module.worker-nodes.ips
+}
