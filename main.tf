@@ -12,78 +12,22 @@ provider "aws" {
   region = "us-east-2"
 }
 
-resource "aws_vpc" "vpc" {
-  cidr_block = var.aws-vpc-cidr-block
-  tags = {
-      Name = "${var.vm-name-prefix}-vpc"
-  }
+module "aws-network" {
+  source = "./modules/aws-network"
+  name-prefix = var.vm-name-prefix
+  vpc-cidr-block = var.aws-vpc-cidr-block
+  subnet-cidr-block = var.aws-subnet-cidr-block
+  admin-ips = var.admin-ips
 }
 
-resource "aws_subnet" "subnet" {
-  vpc_id = aws_vpc.vpc.id
-  cidr_block = var.aws-subnet-cidr-block
-  # availability_zone = var.avail_zone
-  tags = {
-      Name = "${var.vm-name-prefix}-subnet"
-  }
-}
-
-resource "aws_default_security_group" "sg" {
-  vpc_id = aws_vpc.vpc.id
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = var.admin-ips
-  }
-
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-    prefix_list_ids = []
-  }
-
-  tags = {
-    Name = "${var.vm-name-prefix}-sg"
-  }
-}
-
-resource "aws_internet_gateway" "igw" {
-	vpc_id = aws_vpc.vpc.id
-
-    tags = {
-     Name = "${var.vm-name-prefix}-igw"
-   }
-}
-
-resource "aws_default_route_table" "route-table" {
-   default_route_table_id = aws_vpc.vpc.main_route_table_id
-
-   route {
-     cidr_block = "0.0.0.0/0"
-     gateway_id = aws_internet_gateway.igw.id
-   }
-
-   # default route, mapping VPC CIDR block to "local", created implicitly and
-   # cannot be specified.
-
-   tags = {
-     Name = "${var.vm-name-prefix}-route-table"
-   }
-}
-
-# Associate subnet with Route Table
-resource "aws_route_table_association" "a-rtb-subnet" {
-  subnet_id      = aws_subnet.subnet.id
-  route_table_id = aws_default_route_table.route-table.id
-}
-
-resource "aws_key_pair" "debug1" {
-  key_name   = "debug1"
+# This key pair is not actually used. Keys are added to the nodes via cloud-init
+# instead. We just add this here that this key will show up in the AWS console."
+resource "aws_key_pair" "key" {
+  key_name   = "${var.vm-name-prefix}-key}"
   public_key = var.root-admin-pub-key
+  tags = {
+    Name = "${var.vm-name-prefix}-key"
+  }
 }
 
 data "template_file" "node-user-datas" {
@@ -99,11 +43,11 @@ data "template_file" "node-user-datas" {
 resource "aws_instance" "test-node" {
   ami                         = var.base-image
   instance_type               = var.aws-ec2-instance-type
-  key_name                    = aws_key_pair.debug1.key_name
+  # key_name                    = aws_key_pair.debug1.key_name
   associate_public_ip_address = true
-  subnet_id                   = aws_subnet.subnet.id
-  vpc_security_group_ids      = [aws_default_security_group.sg.id]
-  # user_data = element(data.template_file.node-user-datas.*.rendered, count.index)
+  subnet_id                   = module.aws-network.subnet.id
+  vpc_security_group_ids = [module.aws-network.default-security-group.id]
+  user_data = element(data.template_file.node-user-datas.*.rendered, count.index)
   count                       = var.master-nodes
 
   tags = {
