@@ -1,3 +1,22 @@
+variable "admin-ips" {
+  description = "A list of ips or cidr blocks that are allowed to connect to the nodes."
+  type = list(string)
+}
+
+variable "aws-ec2-instance-type" {
+  default = "t2.micro"
+  description = "The AWS instance type to use for all nodes."
+}
+
+variable "aws-subnet-cidr-block" {
+  default = "10.0.1.0/24"
+  description = "The address space to be used for this subnet."
+}
+
+variable "aws-vpc-cidr-block" {
+  default = "10.0.0.0/16"
+  description = "The address space to be used for this VPC."
+}
 
 variable "disk-image-dir" {
   description = "This is the location on the KVM hypervisor host where all the disk images will be kept."

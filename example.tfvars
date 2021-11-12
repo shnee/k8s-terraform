@@ -1,3 +1,7 @@
+# A CIDR block ending in '/32' equates to a single IP address, '0.0.0.0/0'
+# equates to any ip address.
+admin-ips = [ "8.8.8.8/32", "0.0.0.0/0" ]
+
 disk-image-dir = "/path/to/disk/pool/"
 libvirt-connection-url = "qemu+ssh://<user>@<host>/system"
 
@@ -7,7 +11,18 @@ worker-nodes = 2
 node-memory = 2048
 node-vcpus = 2
 
-base-image = "https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
+# 1 GiB, 1 vcpu, only one that is free.
+# This one won't work with k8s because it requires at least 2 vcpus.
+aws-ec2-instance-type = "t2.micro"
+
+# 4 GiB, 2 vcpus
+# aws-ec2-instnce-type = "t2.medium"
+
+# AWS Amazon Linux 2 AMI (HVM), SSD Volume Type - Oregon - 2021.11.11 - free
+# base-image = "ami-00be885d550dcee43"
+# AWS Amazon Linux 2 AMI (HVM), SSD Volume Type - us-east-2 - 2021.11.12 - free
+base-image = "ami-0dd0ccab7e2801812"
+# base-image = "https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
 # From https://cloud.centos.org/centos/7/images/ from	2020-11-12 06:52
 # base-image = "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2"
 
