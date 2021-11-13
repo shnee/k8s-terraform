@@ -38,3 +38,11 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+################################################################################
+# end Pulled from github/gitignore 2021-11-10 commit 1a84870
+################################################################################
+
+k8s-key*
+STARTHERE
+
