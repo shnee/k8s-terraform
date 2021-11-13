@@ -8,6 +8,36 @@ terraform {
   }
 }
 
+################################################################################
+# cloud-init
+################################################################################
+
+data "template_file" "master-node-user-datas" {
+  template = file("${path.module}/cloud_init.cfg")
+  vars = {
+    admin-passwd  = "${var.root-admin-passwd}"
+    admin-pub-key = "${var.root-admin-pub-key}"
+    hostname      = "${var.vm-name-prefix}-master-${count.index}"
+  }
+  count = var.master-nodes
+}
+
+data "template_file" "worker-node-user-datas" {
+  template = file("${path.module}/cloud_init.cfg")
+  vars = {
+    admin-passwd  = "${var.root-admin-passwd}"
+    admin-pub-key = "${var.root-admin-pub-key}"
+    hostname      = "${var.vm-name-prefix}-worker-${count.index}"
+  }
+  count = var.worker-nodes
+}
+
+################################################################################
+# aws
+# To use the aws module, uncomment the aws modules/resources and comment out the
+# libvirt modules/resources.
+################################################################################
+
 provider "aws" {
   region = "us-east-2"
 }
@@ -30,23 +60,13 @@ resource "aws_key_pair" "key" {
   }
 }
 
-data "template_file" "node-user-datas" {
-  template = file("${path.module}/cloud_init.cfg")
-  vars = {
-    admin-passwd  = "${var.root-admin-passwd}"
-    admin-pub-key = "${var.root-admin-pub-key}"
-    hostname      = "${var.vm-name-prefix}-${count.index}"
-  }
-  count = var.master-nodes
-}
-
 module "master-nodes" {
   source             = "./modules/aws-nodes"
   ami                = var.base-image
   ec2-instance-type  = var.aws-ec2-instance-type
   subnet-id          = module.aws-network.subnet.id
   security-group-ids = [module.aws-network.default-security-group.id]
-  user-datas         = data.template_file.node-user-datas
+  user-datas         = data.template_file.master-node-user-datas
   num-nodes          = var.master-nodes
   name-prefix        = "${var.vm-name-prefix}-master"
 }
@@ -57,10 +77,14 @@ module "worker-nodes" {
   ec2-instance-type  = var.aws-ec2-instance-type
   subnet-id          = module.aws-network.subnet.id
   security-group-ids = [module.aws-network.default-security-group.id]
-  user-datas         = data.template_file.node-user-datas
+  user-datas         = data.template_file.worker-node-user-datas
   num-nodes          = var.worker-nodes
   name-prefix        = "${var.vm-name-prefix}-worker"
 }
+
+################################################################################
+# end aws
+################################################################################
 
 ################################################################################
 # libvirt
