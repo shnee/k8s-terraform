@@ -20,31 +20,21 @@ resource "libvirt_volume" "node-images" {
   format = "qcow2"
 }
 
-data "template_file" "node-user-datas" {
-  template = file("${path.module}/cloud_init.cfg")
-  vars = {
-    admin-passwd  = "${var.root-admin-passwd}"
-    admin-pub-key = "${var.root-admin-pub-key}"
-    hostname      = "${var.name-prefix}-${count.index}"
-  }
-  count = var.num-nodes
-}
-
 data "template_file" "network-config" {
   template = file("${path.module}/network_config.cfg")
 }
 
 resource "libvirt_cloudinit_disk" "node-inits" {
   name           = "${var.name-prefix}-${count.index}-init"
-  user_data      = element(data.template_file.node-user-datas.*.rendered, count.index)
+  user_data      = element(var.user-datas.*.rendered, count.index)
   network_config = data.template_file.network-config.rendered
   pool           = var.pool-name
   count          = var.num-nodes
 }
 
 resource "libvirt_domain" "nodes" {
-  count = var.num-nodes
-  name  = "${var.name-prefix}-${count.index}"
+  count  = var.num-nodes
+  name   = "${var.name-prefix}-${count.index}"
   memory = var.node-memory
   vcpu   = var.node-vcpus
 

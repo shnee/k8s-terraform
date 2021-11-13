@@ -24,6 +24,10 @@ variable "node-vcpus" {
   type        = number
 }
 
+variable "user-datas" {
+  description = "A list of cloud-init configs that get applied to their corresponding node."
+}
+
 variable "num-nodes" {
   description = "The number of nodes to create with this config."
 }
