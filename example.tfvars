@@ -1,3 +1,5 @@
+vm-name-prefix = "docker-ansible-test"
+
 # A CIDR block ending in '/32' equates to a single IP address, '0.0.0.0/0'
 # equates to any ip address.
 admin-ips = [ "8.8.8.8/32", "0.0.0.0/0" ]
@@ -21,7 +23,11 @@ aws-ec2-instance-type = "t2.micro"
 # AWS Amazon Linux 2 AMI (HVM), SSD Volume Type - Oregon - 2021.11.11 - free
 # base-image = "ami-00be885d550dcee43"
 # AWS Amazon Linux 2 AMI (HVM), SSD Volume Type - us-east-2 - 2021.11.12 - free
-base-image = "ami-0dd0ccab7e2801812"
+# base-image = "ami-0dd0ccab7e2801812"
+# Ubuntu Server 20.04 LTS (HVM), SSD Volume Type
+# us-east-2 - (64-bit x86) - 2021.11.12 - free
+base-image = "ami-0629230e074c580f2"
+
 # base-image = "https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
 # From https://cloud.centos.org/centos/7/images/ from	2020-11-12 06:52
 # base-image = "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2"

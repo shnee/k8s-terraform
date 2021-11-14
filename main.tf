@@ -12,24 +12,44 @@ terraform {
 # cloud-init
 ################################################################################
 
-data "template_file" "master-node-user-datas" {
+# data "template_file" "master-node-user-datas" {
+#   template = file("${path.module}/cloud_init.cfg")
+#   vars = {
+#     admin-passwd  = "${var.root-admin-passwd}"
+#     admin-pub-key = "${var.root-admin-pub-key}"
+#     hostname      = "${var.vm-name-prefix}-master-${count.index}"
+#   }
+#   count = var.master-nodes
+# }
+# 
+# data "template_file" "worker-node-user-datas" {
+#   template = file("${path.module}/cloud_init.cfg")
+#   vars = {
+#     admin-passwd  = "${var.root-admin-passwd}"
+#     admin-pub-key = "${var.root-admin-pub-key}"
+#     hostname      = "${var.vm-name-prefix}-worker-${count.index}"
+#   }
+#   count = var.worker-nodes
+# }
+
+data "template_file" "amzn2-node-user-datas" {
   template = file("${path.module}/cloud_init.cfg")
   vars = {
     admin-passwd  = "${var.root-admin-passwd}"
     admin-pub-key = "${var.root-admin-pub-key}"
-    hostname      = "${var.vm-name-prefix}-master-${count.index}"
+    hostname      = "${var.vm-name-prefix}-amzn2-${count.index}"
   }
-  count = var.master-nodes
+  count = 1
 }
 
-data "template_file" "worker-node-user-datas" {
+data "template_file" "ubuntu-node-user-datas" {
   template = file("${path.module}/cloud_init.cfg")
   vars = {
     admin-passwd  = "${var.root-admin-passwd}"
     admin-pub-key = "${var.root-admin-pub-key}"
-    hostname      = "${var.vm-name-prefix}-worker-${count.index}"
+    hostname      = "${var.vm-name-prefix}-ubuntu-${count.index}"
   }
-  count = var.worker-nodes
+  count = 1
 }
 
 ################################################################################
@@ -60,27 +80,49 @@ resource "aws_key_pair" "key" {
   }
 }
 
-module "master-nodes" {
+module "amzn2-nodes" {
   source             = "./modules/aws-nodes"
   ami                = var.base-image
   ec2-instance-type  = var.aws-ec2-instance-type
   subnet-id          = module.aws-network.subnet.id
   security-group-ids = [module.aws-network.default-security-group.id]
-  user-datas         = data.template_file.master-node-user-datas
-  num-nodes          = var.master-nodes
-  name-prefix        = "${var.vm-name-prefix}-master"
+  user-datas         = data.template_file.amzn2-node-user-datas
+  num-nodes          = 1
+  name-prefix        = "${var.vm-name-prefix}-amzn2"
 }
 
-module "worker-nodes" {
+module "ubuntu-nodes" {
   source             = "./modules/aws-nodes"
   ami                = var.base-image
   ec2-instance-type  = var.aws-ec2-instance-type
   subnet-id          = module.aws-network.subnet.id
   security-group-ids = [module.aws-network.default-security-group.id]
-  user-datas         = data.template_file.worker-node-user-datas
-  num-nodes          = var.worker-nodes
-  name-prefix        = "${var.vm-name-prefix}-worker"
+  user-datas         = data.template_file.ubuntu-node-user-datas
+  num-nodes          = 1
+  name-prefix        = "${var.vm-name-prefix}-ubuntu"
 }
+
+# module "master-nodes" {
+#   source             = "./modules/aws-nodes"
+#   ami                = var.base-image
+#   ec2-instance-type  = var.aws-ec2-instance-type
+#   subnet-id          = module.aws-network.subnet.id
+#   security-group-ids = [module.aws-network.default-security-group.id]
+#   user-datas         = data.template_file.master-node-user-datas
+#   num-nodes          = var.master-nodes
+#   name-prefix        = "${var.vm-name-prefix}-master"
+# }
+# 
+# module "worker-nodes" {
+#   source             = "./modules/aws-nodes"
+#   ami                = var.base-image
+#   ec2-instance-type  = var.aws-ec2-instance-type
+#   subnet-id          = module.aws-network.subnet.id
+#   security-group-ids = [module.aws-network.default-security-group.id]
+#   user-datas         = data.template_file.worker-node-user-datas
+#   num-nodes          = var.worker-nodes
+#   name-prefix        = "${var.vm-name-prefix}-worker"
+# }
 
 ################################################################################
 # end aws
@@ -134,11 +176,19 @@ module "worker-nodes" {
 # end libvirt
 ################################################################################
 
-# TODO REM move to other file?
-output "master-ips" {
-  value = module.master-nodes.ips
+output "amzn2-ips" {
+  value = module.amzn2-nodes.ips
 }
 
-output "worker-ips" {
-  value = module.worker-nodes.ips
+output "ubuntu-ips" {
+  value = module.ubuntu-nodes.ips
 }
+
+# TODO REM move to other file?
+# output "master-ips" {
+#   value = module.master-nodes.ips
+# }
+# 
+# output "worker-ips" {
+#   value = module.worker-nodes.ips
+# }
