@@ -20,13 +20,28 @@ aws-ec2-instance-type = "t2.micro"
 # 4 GiB, 2 vcpus
 # aws-ec2-instnce-type = "t2.medium"
 
+################################################################################
+# AWS images (AMIs)
+################################################################################
+
+## Amazon Linux 2
 # AWS Amazon Linux 2 AMI (HVM), SSD Volume Type - Oregon - 2021.11.11 - free
 # base-image = "ami-00be885d550dcee43"
 # AWS Amazon Linux 2 AMI (HVM), SSD Volume Type - us-east-2 - 2021.11.12 - free
-# base-image = "ami-0dd0ccab7e2801812"
+base-image = "ami-0dd0ccab7e2801812"
+
+## Ubuntu
 # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type
 # us-east-2 - (64-bit x86) - 2021.11.12 - free
-base-image = "ami-0629230e074c580f2"
+# base-image = "ami-0629230e074c580f2"
+
+## Arch linux
+# arch-linux-lts-hvm-2021.06.02.x86_64-ebs - us-east-2
+# base-image = "ami-02653f06de985e3ba"
+
+################################################################################
+# libvirt images
+################################################################################
 
 # base-image = "https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
 # From https://cloud.centos.org/centos/7/images/ from	2020-11-12 06:52
