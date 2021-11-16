@@ -1,3 +1,5 @@
+vm-name-prefix = "docker-ansible-test"
+
 # A CIDR block ending in '/32' equates to a single IP address, '0.0.0.0/0'
 # equates to any ip address.
 admin-ips = [ "8.8.8.8/32", "0.0.0.0/0" ]
@@ -18,10 +20,35 @@ aws-ec2-instance-type = "t2.micro"
 # 4 GiB, 2 vcpus
 # aws-ec2-instnce-type = "t2.medium"
 
+################################################################################
+# AWS images (AMIs)
+################################################################################
+
+## Amazon Linux 2
 # AWS Amazon Linux 2 AMI (HVM), SSD Volume Type - Oregon - 2021.11.11 - free
 # base-image = "ami-00be885d550dcee43"
 # AWS Amazon Linux 2 AMI (HVM), SSD Volume Type - us-east-2 - 2021.11.12 - free
 base-image = "ami-0dd0ccab7e2801812"
+
+## CentOS
+# CentOS 7.9.2009 x86_64 - us-east-2 - 2021-11-15
+# base-image = "ami-00f8e2c955f7ffa9b"
+# CentOS 8.4.2105 x86_64 - us-east-2 - 2021-11015
+# base-image = "ami-057cacbfbbb471bb3"
+
+## Ubuntu
+# Ubuntu Server 20.04 LTS (HVM), SSD Volume Type
+# us-east-2 - (64-bit x86) - 2021.11.12 - free
+# base-image = "ami-0629230e074c580f2"
+
+## Arch linux
+# arch-linux-lts-hvm-2021.06.02.x86_64-ebs - us-east-2
+# base-image = "ami-02653f06de985e3ba"
+
+################################################################################
+# libvirt images
+################################################################################
+
 # base-image = "https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
 # From https://cloud.centos.org/centos/7/images/ from	2020-11-12 06:52
 # base-image = "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2"
