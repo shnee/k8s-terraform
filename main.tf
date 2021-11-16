@@ -52,6 +52,36 @@ data "template_file" "ubuntu-node-user-datas" {
   count = 1
 }
 
+data "template_file" "arch-node-user-datas" {
+  template = file("${path.module}/cloud_init.cfg")
+  vars = {
+    admin-passwd  = "${var.root-admin-passwd}"
+    admin-pub-key = "${var.root-admin-pub-key}"
+    hostname      = "${var.vm-name-prefix}-arch-${count.index}"
+  }
+  count = 1
+}
+
+data "template_file" "centos7-node-user-datas" {
+  template = file("${path.module}/cloud_init.cfg")
+  vars = {
+    admin-passwd  = "${var.root-admin-passwd}"
+    admin-pub-key = "${var.root-admin-pub-key}"
+    hostname      = "${var.vm-name-prefix}-centos7-${count.index}"
+  }
+  count = 1
+}
+
+data "template_file" "centos8-node-user-datas" {
+  template = file("${path.module}/cloud_init.cfg")
+  vars = {
+    admin-passwd  = "${var.root-admin-passwd}"
+    admin-pub-key = "${var.root-admin-pub-key}"
+    hostname      = "${var.vm-name-prefix}-centos8-${count.index}"
+  }
+  count = 1
+}
+
 ################################################################################
 # aws
 # To use the aws module, uncomment the aws modules/resources and comment out the
@@ -93,13 +123,46 @@ module "amzn2-nodes" {
 
 module "ubuntu-nodes" {
   source             = "./modules/aws-nodes"
-  ami                = var.base-image
+  ami                = "ami-0629230e074c580f2"
   ec2-instance-type  = var.aws-ec2-instance-type
   subnet-id          = module.aws-network.subnet.id
   security-group-ids = [module.aws-network.default-security-group.id]
   user-datas         = data.template_file.ubuntu-node-user-datas
   num-nodes          = 1
   name-prefix        = "${var.vm-name-prefix}-ubuntu"
+}
+
+module "arch-nodes" {
+  source             = "./modules/aws-nodes"
+  ami                = "ami-02653f06de985e3ba"
+  ec2-instance-type  = var.aws-ec2-instance-type
+  subnet-id          = module.aws-network.subnet.id
+  security-group-ids = [module.aws-network.default-security-group.id]
+  user-datas         = data.template_file.ubuntu-node-user-datas
+  num-nodes          = 1
+  name-prefix        = "${var.vm-name-prefix}-arch"
+}
+
+module "centos7-nodes" {
+  source             = "./modules/aws-nodes"
+  ami                = "ami-00f8e2c955f7ffa9b"
+  ec2-instance-type  = var.aws-ec2-instance-type
+  subnet-id          = module.aws-network.subnet.id
+  security-group-ids = [module.aws-network.default-security-group.id]
+  user-datas         = data.template_file.ubuntu-node-user-datas
+  num-nodes          = 1
+  name-prefix        = "${var.vm-name-prefix}-centos7"
+}
+
+module "centos8-nodes" {
+  source             = "./modules/aws-nodes"
+  ami                = "ami-057cacbfbbb471bb3"
+  ec2-instance-type  = var.aws-ec2-instance-type
+  subnet-id          = module.aws-network.subnet.id
+  security-group-ids = [module.aws-network.default-security-group.id]
+  user-datas         = data.template_file.ubuntu-node-user-datas
+  num-nodes          = 1
+  name-prefix        = "${var.vm-name-prefix}-centos8"
 }
 
 # module "master-nodes" {
@@ -182,6 +245,18 @@ output "amzn2-ips" {
 
 output "ubuntu-ips" {
   value = module.ubuntu-nodes.ips
+}
+
+output "arch-ips" {
+  value = module.arch-nodes.ips
+}
+
+output "centos7-ips" {
+  value = module.centos7-nodes.ips
+}
+
+output "centos8-ips" {
+  value = module.centos8-nodes.ips
 }
 
 # TODO REM move to other file?

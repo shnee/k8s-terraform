@@ -30,6 +30,12 @@ aws-ec2-instance-type = "t2.micro"
 # AWS Amazon Linux 2 AMI (HVM), SSD Volume Type - us-east-2 - 2021.11.12 - free
 base-image = "ami-0dd0ccab7e2801812"
 
+## CentOS
+# CentOS 7.9.2009 x86_64 - us-east-2 - 2021-11-15
+# base-image = "ami-00f8e2c955f7ffa9b"
+# CentOS 8.4.2105 x86_64 - us-east-2 - 2021-11015
+# base-image = "ami-057cacbfbbb471bb3"
+
 ## Ubuntu
 # Ubuntu Server 20.04 LTS (HVM), SSD Volume Type
 # us-east-2 - (64-bit x86) - 2021.11.12 - free
