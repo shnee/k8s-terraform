@@ -42,6 +42,10 @@ provider "aws" {
   region = "us-east-2"
 }
 
+module "aws-amis" {
+  source = "./modules/aws-amis"
+}
+
 module "aws-network" {
   source = "./modules/aws-network"
   name-prefix = var.vm-name-prefix
@@ -80,6 +84,10 @@ module "worker-nodes" {
   user-datas         = data.template_file.worker-node-user-datas
   num-nodes          = var.worker-nodes
   name-prefix        = "${var.vm-name-prefix}-worker"
+}
+
+output "amis" {
+  value = module.aws-amis.amis
 }
 
 ################################################################################
