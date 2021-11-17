@@ -12,25 +12,25 @@ terraform {
 # cloud-init
 ################################################################################
 
-data "template_file" "master-node-user-datas" {
-  template = file("${path.module}/cloud_init.cfg")
-  vars = {
-    admin-passwd  = "${var.root-admin-passwd}"
-    admin-pub-key = "${var.root-admin-pub-key}"
-    hostname      = "${var.vm-name-prefix}-master-${count.index}"
-  }
-  count = var.master-nodes
-}
-
-data "template_file" "worker-node-user-datas" {
-  template = file("${path.module}/cloud_init.cfg")
-  vars = {
-    admin-passwd  = "${var.root-admin-passwd}"
-    admin-pub-key = "${var.root-admin-pub-key}"
-    hostname      = "${var.vm-name-prefix}-worker-${count.index}"
-  }
-  count = var.worker-nodes
-}
+# data "template_file" "master-node-user-datas" {
+#   template = file("${path.module}/cloud_init.cfg")
+#   vars = {
+#     admin-passwd  = "${var.root-admin-passwd}"
+#     admin-pub-key = "${var.root-admin-pub-key}"
+#     hostname      = "${var.vm-name-prefix}-master-${count.index}"
+#   }
+#   count = var.master-nodes
+# }
+# 
+# data "template_file" "worker-node-user-datas" {
+#   template = file("${path.module}/cloud_init.cfg")
+#   vars = {
+#     admin-passwd  = "${var.root-admin-passwd}"
+#     admin-pub-key = "${var.root-admin-pub-key}"
+#     hostname      = "${var.vm-name-prefix}-worker-${count.index}"
+#   }
+#   count = var.worker-nodes
+# }
 
 data "template_file" "amzn2-node-user-datas" {
   template = file("${path.module}/cloud_init.cfg")
