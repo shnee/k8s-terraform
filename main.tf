@@ -12,25 +12,25 @@ terraform {
 # cloud-init
 ################################################################################
 
-# data "template_file" "master-node-user-datas" {
-#   template = file("${path.module}/cloud_init.cfg")
-#   vars = {
-#     admin-passwd  = "${var.root-admin-passwd}"
-#     admin-pub-key = "${var.root-admin-pub-key}"
-#     hostname      = "${var.vm-name-prefix}-master-${count.index}"
-#   }
-#   count = var.master-nodes
-# }
-# 
-# data "template_file" "worker-node-user-datas" {
-#   template = file("${path.module}/cloud_init.cfg")
-#   vars = {
-#     admin-passwd  = "${var.root-admin-passwd}"
-#     admin-pub-key = "${var.root-admin-pub-key}"
-#     hostname      = "${var.vm-name-prefix}-worker-${count.index}"
-#   }
-#   count = var.worker-nodes
-# }
+data "template_file" "master-node-user-datas" {
+  template = file("${path.module}/cloud_init.cfg")
+  vars = {
+    admin-passwd  = "${var.root-admin-passwd}"
+    admin-pub-key = "${var.root-admin-pub-key}"
+    hostname      = "${var.vm-name-prefix}-master-${count.index}"
+  }
+  count = var.master-nodes
+}
+
+data "template_file" "worker-node-user-datas" {
+  template = file("${path.module}/cloud_init.cfg")
+  vars = {
+    admin-passwd  = "${var.root-admin-passwd}"
+    admin-pub-key = "${var.root-admin-pub-key}"
+    hostname      = "${var.vm-name-prefix}-worker-${count.index}"
+  }
+  count = var.worker-nodes
+}
 
 data "template_file" "amzn2-node-user-datas" {
   template = file("${path.module}/cloud_init.cfg")
@@ -90,6 +90,10 @@ data "template_file" "centos8-node-user-datas" {
 
 provider "aws" {
   region = "us-east-2"
+}
+
+module "aws-amis" {
+  source = "./modules/aws-amis"
 }
 
 module "aws-network" {
@@ -163,6 +167,10 @@ module "centos8-nodes" {
   user-datas         = data.template_file.ubuntu-node-user-datas
   num-nodes          = 1
   name-prefix        = "${var.vm-name-prefix}-centos8"
+}
+
+output "amis" {
+  value = module.aws-amis.amis
 }
 
 # module "master-nodes" {
