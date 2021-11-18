@@ -43,11 +43,6 @@ variable "node-vcpus" {
   type        = number
 }
 
-variable "nodes-config" {
-  description = "A config that declares how many nodes of each type you want created."
-  type = map(object({base-image=string,num=number}))
-}
-
 variable "root-admin-passwd" {
   description = "This will be the password for the root and admin user. The format of this can by any format accepted by cloud-init's chpasswd module."
 }
@@ -75,4 +70,40 @@ variable "base-image" {
 variable "vm-name-prefix" {
   default = "k8s-tf"
   description = "This prefix will appear before all VM names and hostnames, ie. k8s-tf-master-0."
+}
+
+################################################################################
+# AWS AMI vars
+# These variables are really mor like constants. Using variables improves
+# readability. The defaults are manually updated. Use the aws-amis module to get
+# the latest for each distro.
+################################################################################
+
+variable "amzn2-ami" {
+  default     = "ami-0dd0ccab7e2801812"
+  description = "The AMI to use for Amazon Linux 2."
+}
+variable "ubuntu-ami" {
+  default = "ami-06c7d6c0987eaa46c"
+  description = "The AMI to use for Ubuntu."
+}
+variable "centos7-ami" {
+  default = "ami-00f8e2c955f7ffa9b"
+  description = "The AMI to use for CentOS 7."
+}
+variable "centos8-ami" {
+  default = "ami-057cacbfbbb471bb3"
+  description = "The AMI to use for CentOS 8."
+}
+variable "arch-ami" {
+  default = "ami-02653f06de985e3ba"
+  description = "The AMI to use for Arch Linux."
+}
+variable "rhel7-ami" {
+  default = "ami-0a509b3c2a4d05b3f"
+  description = "The AMI to use for RHEL 7."
+}
+variable "rhel8-ami" {
+  default = "ami-0d871ca8a77af2948"
+  description = "The AMI to use for RHEL 8."
 }

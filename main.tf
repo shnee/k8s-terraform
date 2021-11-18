@@ -8,12 +8,25 @@ terraform {
   }
 }
 
+locals {
+  nodes-config = {
+    "master" = {
+      base-image = var.amzn2-ami
+      num = 1
+    },
+    "worker" = {
+      base-image = var.amzn2-ami
+      num = 2
+    }
+  }
+}
+
 ################################################################################
 # cloud-init
 ################################################################################
 
 module "cloud-init-config" {
-  for_each            = var.nodes-config
+  for_each            = local.nodes-config
   source              = "./modules/cloud-init-config"
   cloud-init-template = "${path.module}/cloud_init.cfg"
   hostname-prefix     = "${var.vm-name-prefix}-${each.key}"
@@ -32,7 +45,8 @@ provider "aws" {
   region = "us-east-2"
 }
 
-# This module will grab the latest ami for a variety of distros.
+# This module will grab the latest ami for a variety of distros. Uncomment to
+# get a list of the latest AMIs for our supported distros.
 # module "aws-amis" {
 #   source = "./modules/aws-amis"
 # }
@@ -59,7 +73,7 @@ resource "aws_key_pair" "key" {
 }
 
 module "nodes" {
-  for_each           = var.nodes-config
+  for_each           = local.nodes-config
   source             = "./modules/aws-nodes"
   ami                = each.value.base-image
   ec2-instance-type  = var.aws-ec2-instance-type
@@ -85,7 +99,7 @@ module "nodes" {
 # }
 # 
 # module "nodes" {
-#   for_each               = var.nodes-config
+#   for_each               = local.nodes-config
 #   source                 = "./modules/libvirt-nodes"
 #   pool-name              = libvirt_pool.images.name
 #   name-prefix            = "${var.vm-name-prefix}-${each.key}"
