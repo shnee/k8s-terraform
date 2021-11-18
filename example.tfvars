@@ -7,9 +7,6 @@ admin-ips = [ "8.8.8.8/32", "0.0.0.0/0" ]
 disk-image-dir = "/path/to/disk/pool/"
 libvirt-connection-url = "qemu+ssh://<user>@<host>/system"
 
-master-nodes = 1
-worker-nodes = 2
-
 node-memory = 2048
 node-vcpus = 2
 

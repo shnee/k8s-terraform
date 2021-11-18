@@ -84,32 +84,19 @@ module "nodes" {
 #   uri = var.libvirt-connection-url
 # }
 # 
-# module "master-nodes" {
+# module "nodes" {
+#   for_each               = var.nodes-config
 #   source                 = "./modules/libvirt-nodes"
 #   pool-name              = libvirt_pool.images.name
-#   name-prefix            = "${var.vm-name-prefix}-master"
-#   num-nodes              = var.master-nodes
+#   name-prefix            = "${var.vm-name-prefix}-${each.key}"
+#   num-nodes              = each.value.num
 #   node-memory            = var.node-memory
 #   node-vcpus             = var.node-vcpus
-#   base-image             = var.base-image
+#   base-image             = each.value.base-image
 #   root-admin-passwd      = var.root-admin-passwd
 #   root-admin-pub-key     = var.root-admin-pub-key
 #   libvirt-connection-url = var.libvirt-connection-url
-#   user-datas             = data.template_file.master-node-user-datas
-# }
-# 
-# module "worker-nodes" {
-#   source                 = "./modules/libvirt-nodes"
-#   pool-name              = libvirt_pool.images.name
-#   name-prefix            = "${var.vm-name-prefix}-worker"
-#   num-nodes              = var.worker-nodes
-#   node-memory            = var.node-memory
-#   node-vcpus             = var.node-vcpus
-#   base-image             = var.base-image
-#   root-admin-passwd      = var.root-admin-passwd
-#   root-admin-pub-key     = var.root-admin-pub-key
-#   libvirt-connection-url = var.libvirt-connection-url
-#   user-datas             = data.template_file.worker-node-user-datas
+#   user-datas             = lookup(module.cloud-init-config, each.key, null).user-datas
 # }
 # 
 # resource "libvirt_pool" "images" {
