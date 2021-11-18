@@ -10,13 +10,33 @@ terraform {
 
 locals {
   nodes-config = {
-    "master" = {
+    "amzn2" = {
       base-image = var.amzn2-ami
       num = 1
     },
-    "worker" = {
-      base-image = var.amzn2-ami
-      num = 2
+    "ubuntu" = {
+      base-image = var.ubuntu-ami
+      num = 1
+    },
+    "arch" = {
+      base-image = var.arch-ami
+      num = 1
+    },
+    "centos7" = {
+      base-image = var.centos7-ami
+      num = 1
+    },
+    "centos8" = {
+      base-image = var.centos8-ami
+      num = 1
+    },
+    "rhel7" = {
+      base-image = var.rhel7-ami
+      num = 1
+    },
+    "rhel8" = {
+      base-image = var.rhel8-ami
+      num = 1
     }
   }
 }
