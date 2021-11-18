@@ -22,7 +22,7 @@ IPS_JSON="$(
 # An array of all node "types"
 NODE_TYPE_ARRAY="$(
     echo $IPS_JSON | \
-        jq '.key' | \
+        jq '.value.value | to_entries | .[] | .key' | \
         sed 's/"//g' | \
         sed -z 's/\n/ /g;s/ $/\n/g')"
 
@@ -32,12 +32,12 @@ VM_IP_EXPORTS="$(
 
         # Convert type, converts "master-ips" to "MASTER"
         TYPE_UPPER="$(echo ${TYPE^^} | sed s/_.*$//g)"
-        echo "$OUTPUTS_JSON" | \
-            jq '.'"$TYPE"'.value[]' | \
+        echo "$IPS_JSON" | \
+            jq '.value.value.'"$TYPE"'[]' | \
             # Add line numbers starting with 0.
             nl -v 0 | \
             # Print an export string with a type placeholder "__TYPE__".
-            awk '{print "export __TYPE__" $1 "=" $2}' | \
+            awk '{print "export __TYPE___" $1 "=" $2}' | \
             sed s/__TYPE__/$TYPE_UPPER/g
     done)"
 
@@ -48,6 +48,7 @@ ANSIBLE_INV="$(
         sed -z 's/\n/,/g;s/,$/\n/g')"
 
 # Create an inventory file for ansible.
+echo "# Wrote an Ansible inventory file at ./inventory"
 echo "[k8s_nodes]" > inventory
 echo $VM_IP_EXPORTS | \
     sed 's/"//g' | \

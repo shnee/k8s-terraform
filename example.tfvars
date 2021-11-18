@@ -1,4 +1,4 @@
-vm-name-prefix = "docker-ansible-test"
+vm-name-prefix = "ansible-test"
 
 # A CIDR block ending in '/32' equates to a single IP address, '0.0.0.0/0'
 # equates to any ip address.
@@ -7,11 +7,12 @@ admin-ips = [ "8.8.8.8/32", "0.0.0.0/0" ]
 disk-image-dir = "/path/to/disk/pool/"
 libvirt-connection-url = "qemu+ssh://<user>@<host>/system"
 
-master-nodes = 1
-worker-nodes = 2
-
 node-memory = 2048
 node-vcpus = 2
+
+################################################################################
+# AWS EC2 instance types
+################################################################################
 
 # 1 GiB, 1 vcpu, only one that is free.
 # This one won't work with k8s because it requires at least 2 vcpus.
@@ -52,6 +53,10 @@ base-image = "ami-0dd0ccab7e2801812"
 # base-image = "https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
 # From https://cloud.centos.org/centos/7/images/ from	2020-11-12 06:52
 # base-image = "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2"
+
+################################################################################
+# Keys/Passwords
+################################################################################
 
 # Password hash created with:
 # python3 -c 'import crypt; print(crypt.crypt("linux", crypt.mksalt(crypt.METHOD_SHA512)))'
