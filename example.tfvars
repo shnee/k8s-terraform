@@ -1,4 +1,4 @@
-vm-name-prefix = "docker-ansible-test"
+vm-name-prefix = "k8s-tf"
 
 # A CIDR block ending in '/32' equates to a single IP address, '0.0.0.0/0'
 # equates to any ip address.
@@ -13,12 +13,29 @@ worker-nodes = 2
 node-memory = 2048
 node-vcpus = 2
 
+################################################################################
+# AWS EC2 instance types
+################################################################################
+
 # 1 GiB, 1 vcpu, only one that is free.
 # This one won't work with k8s because it requires at least 2 vcpus.
 aws-ec2-instance-type = "t2.micro"
 
 # 4 GiB, 2 vcpus
 # aws-ec2-instnce-type = "t2.medium"
+
+################################################################################
+
+nodes-config = {
+  "master" = {
+    base-image = "ami-0dd0ccab7e2801812"
+    num = 1
+  },
+  "worker" = {
+    base-image = "ami-0dd0ccab7e2801812"
+    num = 2
+  }
+}
 
 ################################################################################
 # AWS images (AMIs)
@@ -52,6 +69,10 @@ base-image = "ami-0dd0ccab7e2801812"
 # base-image = "https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
 # From https://cloud.centos.org/centos/7/images/ from	2020-11-12 06:52
 # base-image = "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2"
+
+################################################################################
+# Keys/Passwords
+################################################################################
 
 # Password hash created with:
 # python3 -c 'import crypt; print(crypt.crypt("linux", crypt.mksalt(crypt.METHOD_SHA512)))'

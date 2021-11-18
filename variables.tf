@@ -43,6 +43,11 @@ variable "node-vcpus" {
   type        = number
 }
 
+variable "nodes-config" {
+  description = "A config that declares how many nodes of each type you want created."
+  type = map(object({base-image=string,num=number}))
+}
+
 variable "root-admin-passwd" {
   description = "This will be the password for the root and admin user. The format of this can by any format accepted by cloud-init's chpasswd module."
 }
