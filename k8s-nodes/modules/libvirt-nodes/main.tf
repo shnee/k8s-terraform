@@ -8,10 +8,6 @@ terraform {
   }
 }
 
-provider "libvirt" {
-  uri = var.libvirt-connection-url
-}
-
 resource "libvirt_volume" "node-images" {
   name   = "${var.name-prefix}-${count.index}"
   pool   = var.pool-name
