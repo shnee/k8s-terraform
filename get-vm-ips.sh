@@ -48,7 +48,6 @@ ANSIBLE_INV="$(
         sed -z 's/\n/,/g;s/,$/\n/g')"
 
 # Create an inventory file for ansible.
-echo "# Wrote an Ansible inventory file at ./inventory"
 echo "[k8s_nodes]" > inventory
 echo $VM_IP_EXPORTS | \
     sed 's/"//g' | \
