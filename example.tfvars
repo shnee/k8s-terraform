@@ -54,6 +54,11 @@ base-image = "ami-0dd0ccab7e2801812"
 # From https://cloud.centos.org/centos/7/images/ from	2020-11-12 06:52
 # base-image = "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2"
 
+## Arch
+# From https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/40102/artifacts/browse/output
+# on 2021-11-28
+# base-image = "/media/nas/software/isos/Arch-Linux-x86_64-libvirt-20211128.40102.box"
+
 ################################################################################
 # Keys/Passwords
 ################################################################################
