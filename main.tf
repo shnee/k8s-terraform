@@ -106,7 +106,9 @@ module "nodes" {
 #   num-nodes              = each.value.num
 #   node-memory            = var.node-memory
 #   node-vcpus             = var.node-vcpus
+#   node-disk-size         = var.libvirt-node-disk-size
 #   base-image             = each.value.base-image
+#   network-name           = var.libvirt-network-name
 #   root-admin-passwd      = var.root-admin-passwd
 #   root-admin-pub-key     = var.root-admin-pub-key
 #   libvirt-connection-url = var.libvirt-connection-url

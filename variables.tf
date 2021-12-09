@@ -31,6 +31,16 @@ variable "libvirt-connection-url" {
   description = "The libvirt connection URI, ie. qemu+ssh://<user>@<host>/system"
 }
 
+variable "libvirt-network-name" {
+  default = "default"
+  description = "The name of a pre-existing libvirt virtual-network."
+}
+
+variable "libvirt-node-disk-size" {
+  default = 4294967296
+  description = "The size of the disk to be used for libvirt nodes. (in bytes)"
+}
+
 variable "node-memory" {
   default     = "2048"
   description = "The amount of memory to be used for all the nodes."
@@ -106,4 +116,26 @@ variable "rhel7-ami" {
 variable "rhel8-ami" {
   default = "ami-0d871ca8a77af2948"
   description = "The AMI to use for RHEL 8."
+}
+
+################################################################################
+# Libvirt Images
+# These variables are really mor like constants. Using variables improves
+# readability. The defaults are manually updated.
+################################################################################
+
+variable "ubuntu-img" {
+  default     = "https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
+  description = "The libvirt image tp use for Ubuntu."
+}
+
+variable "centos7-img" {
+  # Latest as of 2021-12-06.
+  default = "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2111.qcow2"
+  description = "The libvirt image tp use for CentOS 7."
+}
+
+variable "centos8-img" {
+  default = "https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.4.2105-20210603.0.x86_64.qcow2"
+  description = "The libvirt image tp use for CentOS 8."
 }

@@ -12,6 +12,16 @@ variable "name-prefix" {
   description = "This will be a prefix for all resource names, ie. domains will be created suck as \"k8s-node-2\"."
 }
 
+variable "network-name" {
+  default = "default"
+  description = "The name of a pre-existing virtual-network."
+}
+
+variable "node-disk-size" {
+  default = 4294967296
+  description = "The size of the disk to be used for libvirt nodes. (in bytes)"
+}
+
 variable "node-memory" {
   default     = "2048"
   description = "The amount of memory to be used for all the nodes."

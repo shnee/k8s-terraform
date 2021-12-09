@@ -10,6 +10,15 @@ libvirt-connection-url = "qemu+ssh://<user>@<host>/system"
 node-memory = 2048
 node-vcpus = 2
 
+## libvirt disk size
+# 1 GiB = 1073741824
+# 4 GiB
+# libvirt-node-disk-size = "${4 * 1073741824}"
+# 8 GiB
+# libvirt-node-disk-size = "${8 * 1073741824}"
+# 12 GiB
+# libvirt-node-disk-size = "${12 * 1073741824}"
+
 ################################################################################
 # AWS EC2 instance types
 ################################################################################
@@ -51,8 +60,13 @@ base-image = "ami-0dd0ccab7e2801812"
 ################################################################################
 
 # base-image = "https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-disk-kvm.img"
-# From https://cloud.centos.org/centos/7/images/ from	2020-11-12 06:52
-# base-image = "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2009.qcow2"
+# From https://cloud.centos.org/centos/7/images/ from	2020-12-06
+# base-image = "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-2111.qcow2"
+
+## Arch
+# From https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/40102/artifacts/browse/output
+# on 2021-11-28
+# base-image = "/media/nas/software/isos/Arch-Linux-x86_64-libvirt-20211128.40102.box"
 
 ## Arch
 # From https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/40102/artifacts/browse/output
