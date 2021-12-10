@@ -8,6 +8,12 @@ variable "hostname-prefix" {
   description = "This prefix wil be applied as a prefix for the hostnames."
 }
 
+variable "install-qemu-agent" {
+  default     = false
+  description = "This flag determines whether or not qemu-agent is installed."
+  type        = bool
+}
+
 variable "num" {
   description = "The number of user-datas to create with these parameters."
 }

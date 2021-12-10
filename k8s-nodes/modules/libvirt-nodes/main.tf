@@ -9,11 +9,18 @@ terraform {
 }
 
 resource "libvirt_volume" "node-images" {
-  name   = "${var.name-prefix}-${count.index}"
+  name   = "${var.name-prefix}-base"
   pool   = var.pool-name
   source = var.base-image
-  count  = var.num-nodes
   format = "qcow2"
+}
+
+resource "libvirt_volume" "node-images-resized" {
+  name           = "${var.name-prefix}-${count.index}-resized"
+  pool           = var.pool-name
+  base_volume_id = libvirt_volume.node-images.id
+  count          = var.num-nodes
+  size           = var.node-disk-size
 }
 
 data "template_file" "network-config" {
@@ -37,9 +44,9 @@ resource "libvirt_domain" "nodes" {
   cloudinit = element(libvirt_cloudinit_disk.node-inits.*.id, count.index)
 
   network_interface {
-    network_name   = "default"
+    network_name   = var.network-name
     hostname       = "${var.name-prefix}-${count.index}"
-    wait_for_lease = true
+    # wait_for_lease = true
   }
 
   # IMPORTANT: this is a known bug on cloud images, since they expect a console
@@ -58,7 +65,7 @@ resource "libvirt_domain" "nodes" {
   }
 
   disk {
-    volume_id = element(libvirt_volume.node-images.*.id, count.index)
+    volume_id = element(libvirt_volume.node-images-resized.*.id, count.index)
   }
 
   graphics {
