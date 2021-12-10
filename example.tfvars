@@ -68,6 +68,11 @@ base-image = "ami-0dd0ccab7e2801812"
 # on 2021-11-28
 # base-image = "/media/nas/software/isos/Arch-Linux-x86_64-libvirt-20211128.40102.box"
 
+## Arch
+# From https://gitlab.archlinux.org/archlinux/arch-boxes/-/jobs/40102/artifacts/browse/output
+# on 2021-11-28
+# base-image = "/media/nas/software/isos/Arch-Linux-x86_64-libvirt-20211128.40102.box"
+
 ################################################################################
 # Keys/Passwords
 ################################################################################

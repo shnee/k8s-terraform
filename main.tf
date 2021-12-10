@@ -10,35 +10,16 @@ terraform {
 
 locals {
   nodes-config = {
-    "amzn2" = {
-      base-image = var.amzn2-ami
-      num = 1
-    },
-    "ubuntu" = {
-      base-image = var.ubuntu-ami
-      num = 1
-    },
-    "arch" = {
-      base-image = var.arch-ami
-      num = 1
-    },
-    "centos7" = {
-      base-image = var.centos7-ami
-      num = 1
-    },
-    "centos8" = {
+    "master" = {
       base-image = var.centos8-ami
       num = 1
     },
-    "rhel7" = {
-      base-image = var.rhel7-ami
-      num = 1
-    },
-    "rhel8" = {
-      base-image = var.rhel8-ami
-      num = 1
+    "worker" = {
+      base-image = var.centos8-ami
+      num = 2
     }
   }
+  install-qemu-agent = false
 }
 
 ################################################################################
@@ -53,6 +34,7 @@ module "cloud-init-config" {
   num                 = each.value.num
   root-admin-passwd   = var.root-admin-passwd
   root-admin-pub-key  = var.root-admin-pub-key
+  install-qemu-agent  = local.install-qemu-agent
 }
 
 ################################################################################
@@ -145,6 +127,8 @@ module "nodes" {
 # end libvirt
 ################################################################################
 
-output "ips" {
-  value = { for type, node in module.nodes : type => node.ips }
+# This will outpus a map of group => [{hostname, ip}].
+# TODO A 'names' output needs to be added to libvirt.
+output "groups_hostnames_ips" {
+  value = { for type, node in module.nodes : type => zipmap(node.names, node.ips) }
 }

@@ -33,7 +33,7 @@ resource "aws_default_security_group" "sg" {
   }
 
   tags = {
-    Name = "${var.name-prefix}-ssh-from-admins--sg"
+    Name = "${var.name-prefix}-ssh-from-admins-sg"
   }
 }
 
