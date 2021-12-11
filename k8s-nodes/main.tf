@@ -1,5 +1,16 @@
 terraform {
   required_version = ">= 1.0.8"
+
+  backend "s3" {
+
+    bucket         = "mss-terraform-state"
+    key            = "global/s3/terraform.tfstate"
+    region         = "us-gov-west-1"
+
+    dynamodb_table = "mss-terraform-state-lock"
+    encrypt        = true
+
+  }
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
@@ -42,7 +53,7 @@ module "cloud-init-config" {
 ################################################################################
 
 provider "aws" {
-  region = "us-east-2"
+  region = "us-gov-west-1"
 }
 
 # This module will grab the latest ami for a variety of distros. Uncomment to
