@@ -1,6 +1,7 @@
 resource "aws_instance" "nodes" {
   ami                         = var.ami
   instance_type               = var.ec2-instance-type
+  # TODO REM double check this key.
   # key_name                    = aws_key_pair.debug1.key_name
   associate_public_ip_address = true
   subnet_id                   = var.subnet-id

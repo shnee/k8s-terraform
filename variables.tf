@@ -8,6 +8,11 @@ variable "aws-ec2-instance-type" {
   description = "The AWS instance type to use for all nodes."
 }
 
+variable "aws-region" {
+  default = "us-east-1"
+  description = "The AWS region to use."
+}
+
 variable "aws-subnet-cidr-block" {
   default = "10.0.1.0/24"
   description = "The address space to be used for this subnet."
