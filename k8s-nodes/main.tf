@@ -1,23 +1,3 @@
-terraform {
-  required_version = ">= 1.0.8"
-
-    backend "s3" {
-      
-      bucket            = "mss-terraform-state"
-      key               = "global/s3/terraform.tfstate"
-      region            = "us-gov-west-1"
-      
-      dynamodb_table    = "mss-terraform-state-lock"
-      encrypt           = true
-
-  }
-  required_providers {
-    libvirt = {
-      source  = "dmacvicar/libvirt"
-      version = "0.6.11"
-    }
-  }
-}
 
 locals {
   nodes-config = {
@@ -54,10 +34,6 @@ module "cloud-init-config" {
 # libvirt modules/resources.
 ################################################################################
 
-provider "aws" {
-  region = "us-gov-west-1"
-}
-
 # This module will grab the latest ami for a variety of distros. Uncomment to
 # get a list of the latest AMIs for our supported distros.
 # module "aws-amis" {
@@ -67,13 +43,26 @@ provider "aws" {
 #   value = module.aws-amis.amis
 # }
 
-module "aws-network" {
-  source            = "./modules/aws-network"
-  name-prefix       = var.vm-name-prefix
-  vpc-cidr-block    = var.aws-vpc-cidr-block
-  subnet-cidr-block = var.aws-subnet-cidr-block
-  admin-ips         = var.admin-ips
+################################################################################
+# AWS Networking
+# Use of the 2 modules below to create resources for the AWS network.
+# aws-network-from-scratch will build the AWS network from scratch.
+# aws-network-existing will query AWS for an existing VPC.
+################################################################################
+
+# module "aws-network-from-scratch" {
+#   source            = "./modules/aws-network-from-scratch"
+#   name-prefix       = var.vm-name-prefix
+#   vpc-cidr-block    = var.aws-vpc-cidr-block
+#   subnet-cidr-block = var.aws-subnet-cidr-block
+#   admin-ips         = var.admin-ips
+# }
+
+module "aws-network-existing" {
+  source = "./modules/aws-network-existing"
 }
+
+################################################################################
 
 # This key pair is not actually used. Keys are added to the nodes via cloud-init
 # instead. We just add this here that this key will show up in the AWS console."
