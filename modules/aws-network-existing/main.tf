@@ -21,3 +21,7 @@ data "aws_subnet" "subnets" {
   for_each = toset(data.aws_subnets.subnet-ids.ids)
   id = each.key
 }
+
+data "aws_security_group" "default" {
+  name = var.default-security-group-name
+}
