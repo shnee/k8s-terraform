@@ -45,6 +45,6 @@ terraform.rc
 
 k8s-key*
 *admin-key*
-TARTHERE
+STARTHERE
 inventory
 
