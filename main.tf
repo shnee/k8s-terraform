@@ -81,13 +81,8 @@ module "nodes" {
   source             = "./modules/aws-nodes"
   ami                = each.value.base-image
   ec2-instance-type  = var.aws-ec2-instance-type
-<<<<<<< HEAD
-  subnet-id          = module.aws-network.subnet.id
-  security-group-ids = [module.aws-network.default-security-group.id]
-=======
   subnet-id          = module.aws-network-existing.k8s-subnets-ids[0]
   security-group-ids = [module.aws-network-existing.default-sg.id]
->>>>>>> gitea
   user-datas         = lookup(module.cloud-init-config, each.key, null).user-datas
   num-nodes          = each.value.num
   name-prefix        = "${var.vm-name-prefix}-${each.key}"
@@ -134,21 +129,14 @@ module "nodes" {
 # end libvirt
 ################################################################################
 
-<<<<<<< HEAD
-# This will output a map of group => [{hostname, ip}].
-=======
 # This will outpus a map of group => [{hostname, ip}].
->>>>>>> gitea
 # TODO A 'names' output needs to be added to libvirt.
 output "groups_hostnames_ips" {
   value = { for type, node in module.nodes : type => zipmap(node.names, node.ips) }
 }
-<<<<<<< HEAD
-=======
 
 # This will outpus a map of group => [{hostname, private_ip}].
 # TODO Figure out how what to do about private_ips for libvirt.
 output "groups_hostnames_private_ips" {
   value = { for type, node in module.nodes : type => zipmap(node.names, node.private_ips) }
 }
->>>>>>> gitea
