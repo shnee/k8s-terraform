@@ -1,4 +1,5 @@
 variable "admin-ips" {
+  default = ["0.0.0.0/0"]
   description = "A list of ips or cidr blocks that are allowed to connect to the nodes."
   type = list(string)
 }
@@ -33,6 +34,7 @@ variable "disk-image-pool-name" {
 }
 
 variable "libvirt-connection-url" {
+  default = "nobody@localhost"
   description = "The libvirt connection URI, ie. qemu+ssh://<user>@<host>/system"
 }
 
@@ -95,31 +97,46 @@ variable "vm-name-prefix" {
 ################################################################################
 
 variable "amzn2-ami" {
-  default     = "ami-0dd0ccab7e2801812"
+  # us-east-2
+  # default     = "ami-0dd0ccab7e2801812"
+  # us-gov-west-1
+  default     = "ami-098bf51d9a35299f0"
   description = "The AMI to use for Amazon Linux 2."
 }
 variable "ubuntu-ami" {
-  default = "ami-06c7d6c0987eaa46c"
+  # us-east-2
+  # default = "ami-06c7d6c0987eaa46c"
+  # us-gov-west-1
+  default = "ami-087ee83c8de303181"
   description = "The AMI to use for Ubuntu."
 }
 variable "centos7-ami" {
+  # us-east-2
   default = "ami-00f8e2c955f7ffa9b"
   description = "The AMI to use for CentOS 7."
 }
 variable "centos8-ami" {
+  # us-east-2
   default = "ami-057cacbfbbb471bb3"
   description = "The AMI to use for CentOS 8."
 }
 variable "arch-ami" {
+  # us-east-2
   default = "ami-02653f06de985e3ba"
   description = "The AMI to use for Arch Linux."
 }
 variable "rhel7-ami" {
-  default = "ami-0a509b3c2a4d05b3f"
+  # us-east-2
+  # default = "ami-0a509b3c2a4d05b3f"
+  # us-gov-west-1
+  default = "ami-04ccdf5793086ea95"
   description = "The AMI to use for RHEL 7."
 }
 variable "rhel8-ami" {
-  default = "ami-0d871ca8a77af2948"
+  # us-east-2
+  # default = "ami-0d871ca8a77af2948"
+  # us-gov-west-1
+  default = "ami-0b1f10cd1cd107dd2"
   description = "The AMI to use for RHEL 8."
 }
 

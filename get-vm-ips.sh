@@ -22,6 +22,10 @@ VM_NAME_PREFIX="$(
         tail -n 1 | \
         sed 's/^.*=\s*"\(.*\)"/\1/g')"
 
+PUBLIC_IP_OUTPUT="groups_hostnames_ips"
+PRIVATE_IP_OUTPUT="groups_hostnames_private_ips"
+IP_TYPE="$PRIVATE_IP_OUTPUT"
+
 # This command stores the output data in the format below.
 # [
 #   {
@@ -48,7 +52,7 @@ VM_NAME_PREFIX="$(
 #   }
 # ]
 DATA="$(terraform show -json | \
-    jq '.values.outputs.groups_hostnames_ips.value | to_entries |
+    jq '.values.outputs.'"$IP_TYPE"'.value | to_entries |
         map({group: .key, vms:.value | to_entries |
         map({hostname:.key,ip:.value})})')"
 

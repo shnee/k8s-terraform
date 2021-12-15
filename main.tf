@@ -2,11 +2,11 @@
 locals {
   nodes-config = {
     "master" = {
-      base-image = var.centos8-ami
+      base-image = var.ubuntu-ami
       num = 1
     },
     "worker" = {
-      base-image = var.centos8-ami
+      base-image = var.ubuntu-ami
       num = 2
     }
   }
@@ -79,8 +79,8 @@ module "nodes" {
   source             = "./modules/aws-nodes"
   ami                = each.value.base-image
   ec2-instance-type  = var.aws-ec2-instance-type
-  subnet-id          = module.aws-network.subnet.id
-  security-group-ids = [module.aws-network.default-security-group.id]
+  subnet-id          = module.aws-network-existing.k8s-subnets[0]
+  security-group-ids = [data.aws_security_group.default.id]
   user-datas         = lookup(module.cloud-init-config, each.key, null).user-datas
   num-nodes          = each.value.num
   name-prefix        = "${var.vm-name-prefix}-${each.key}"
@@ -131,4 +131,10 @@ module "nodes" {
 # TODO A 'names' output needs to be added to libvirt.
 output "groups_hostnames_ips" {
   value = { for type, node in module.nodes : type => zipmap(node.names, node.ips) }
+}
+
+# This will outpus a map of group => [{hostname, private_ip}].
+# TODO Figure out how what to do about private_ips for libvirt.
+output "groups_hostnames_private_ips" {
+  value = { for type, node in module.nodes : type => zipmap(node.names, node.private_ips) }
 }
