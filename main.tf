@@ -59,7 +59,9 @@ module "cloud-init-config" {
 # }
 
 module "aws-network-existing" {
-  source = "./modules/aws-network-existing"
+  source                      = "./modules/aws-network-existing"
+  default-vpc-name            = var.aws-existing-vpc-name
+  default-security-group-name = var.aws-existing-sg-name
 }
 
 ################################################################################
@@ -79,8 +81,8 @@ module "nodes" {
   source             = "./modules/aws-nodes"
   ami                = each.value.base-image
   ec2-instance-type  = var.aws-ec2-instance-type
-  subnet-id          = module.aws-network-existing.k8s-subnets[0]
-  security-group-ids = [data.aws_security_group.default.id]
+  subnet-id          = module.aws-network-existing.k8s-subnets-ids[0]
+  security-group-ids = [module.aws-network-existing.default-sg.id]
   user-datas         = lookup(module.cloud-init-config, each.key, null).user-datas
   num-nodes          = each.value.num
   name-prefix        = "${var.vm-name-prefix}-${each.key}"

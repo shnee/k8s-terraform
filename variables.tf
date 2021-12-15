@@ -9,6 +9,16 @@ variable "aws-ec2-instance-type" {
   description = "The AWS instance type to use for all nodes."
 }
 
+variable "aws-existing-sg-name" {
+  default = "change-me-if-using-aws-network-existing"
+  description = "The name of the existing security group when using aws-network-existing."
+}
+
+variable "aws-existing-vpc-name" {
+  default = "change-me-if-using-aws-network-existing"
+  description = "The name of the existing VPC when using aws-network-existing."
+}
+
 variable "aws-region" {
   default = "us-east-1"
   description = "The AWS region to use."
