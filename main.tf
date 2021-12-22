@@ -1,14 +1,26 @@
 
 locals {
   nodes-config = {
-    "master" = {
+    "k8s-master" = {
       base-image = var.ubuntu-ami
+      aws-ec2-type = var.t2-medium-4gib-2vcpu
+      num = 0
+    },
+    "k8s-worker" = {
+      base-image = var.ubuntu-ami
+      aws-ec2-type = var.t2-medium-4gib-2vcpu
+      num = 0
+    },
+    "ansible-test" = {
+      base-image = var.ubuntu-ami
+      aws-ec2-type = var.t2-micro-1gib-1vcpu
+      num = 0
+    },
+    "nfs" = {
+      base-image = var.ubuntu-ami
+      aws-ec2-type = var.t2-micro-1gib-1vcpu
       num = 1
     },
-    "worker" = {
-      base-image = var.ubuntu-ami
-      num = 2
-    }
   }
   install-qemu-agent = false
 }
@@ -80,12 +92,13 @@ module "nodes" {
   for_each           = local.nodes-config
   source             = "./modules/aws-nodes"
   ami                = each.value.base-image
-  ec2-instance-type  = var.aws-ec2-instance-type
   subnet-id          = module.aws-network-existing.k8s-subnets-ids[0]
   security-group-ids = [module.aws-network-existing.default-sg.id]
   user-datas         = lookup(module.cloud-init-config, each.key, null).user-datas
   num-nodes          = each.value.num
   name-prefix        = "${var.vm-name-prefix}-${each.key}"
+  # TODO add a input for the key so that it will show up as the key in the aws
+  # console.
 }
 
 ################################################################################

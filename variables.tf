@@ -4,11 +4,6 @@ variable "admin-ips" {
   type = list(string)
 }
 
-variable "aws-ec2-instance-type" {
-  default = "t2.micro"
-  description = "The AWS instance type to use for all nodes."
-}
-
 variable "aws-existing-sg-name" {
   default = "change-me-if-using-aws-network-existing"
   description = "The name of the existing security group when using aws-network-existing."
@@ -101,7 +96,7 @@ variable "vm-name-prefix" {
 
 ################################################################################
 # AWS AMI vars
-# These variables are really mor like constants. Using variables improves
+# These variables are really more like constants. Using variables improves
 # readability. The defaults are manually updated. Use the aws-amis module to get
 # the latest for each distro.
 ################################################################################
@@ -151,8 +146,34 @@ variable "rhel8-ami" {
 }
 
 ################################################################################
+# AWS EC2 types.
+# These variables are really more like constants. Using variables improves
+# readability.
+################################################################################
+
+variable "t2-micro-1gib-1vcpu" {
+  description = "t2.micro EC2 instance with 1 GiB mem and 1 vCPU."
+  default = "t2.micro"
+}
+
+variable "t2-medium-4gib-2vcpu" {
+  description = "t2.medium EC2 instance with 4 GiB mem and 2 vCPUs."
+  default = "t2.medium"
+}
+
+variable "t2-large-8gib-2vcpu" {
+  description = "t2.large EC2 instance with 8 GiB mem and 2 vCPUs."
+  default = "t2.large"
+}
+
+variable "t2-xlarge-16gib-4vcpu" {
+  description = "t2.xlarge EC2 instance with 16 GiB mem and 4 vCPUs."
+  default = "t2.xlarge"
+}
+
+################################################################################
 # Libvirt Images
-# These variables are really mor like constants. Using variables improves
+# These variables are really more like constants. Using variables improves
 # readability. The defaults are manually updated.
 ################################################################################
 

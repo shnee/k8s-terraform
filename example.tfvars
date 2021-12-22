@@ -20,17 +20,6 @@ node-vcpus = 2
 # libvirt-node-disk-size = "${12 * 1073741824}"
 
 ################################################################################
-# AWS EC2 instance types
-################################################################################
-
-# 1 GiB, 1 vcpu, only one that is free.
-# This one won't work with k8s because it requires at least 2 vcpus.
-aws-ec2-instance-type = "t2.micro"
-
-# 4 GiB, 2 vcpus
-# aws-ec2-instnce-type = "t2.medium"
-
-################################################################################
 # AWS images (AMIs)
 ################################################################################
 
