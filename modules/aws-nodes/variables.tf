@@ -25,9 +25,9 @@ variable "user-datas" {
   description = "A list of cloud-init configs that get applied to their corresponding node."
 }
 
-variable "subnet-id" {
-  description = "The ID of the subnet that all the nodes will be added to."
-  type = string
+variable "subnet-ids" {
+  description = "An array of subnet ids. These subnets will be round robined as the subnet to use for each node."
+  type = list(string)
 }
 
 variable "security-group-ids" {

@@ -1,24 +1,32 @@
 
 locals {
+  k8s-subnets-ids = [
+    module.aws-network-existing.subnet-by-name["subnet_1"].id,
+    module.aws-network-existing.subnet-by-name["subnet_3"].id,
+  ]
   nodes-config = {
     "k8s-master" = {
       base-image = var.ubuntu-ami
       aws-ec2-type = var.t2-medium-4gib-2vcpu
-      num = 0
+      subnet-ids = local.k8s-subnets-ids
+      num = 1
     },
     "k8s-worker" = {
       base-image = var.ubuntu-ami
       aws-ec2-type = var.t2-medium-4gib-2vcpu
-      num = 0
+      subnet-ids = local.k8s-subnets-ids
+      num = 2
     },
     "ansible-test" = {
       base-image = var.ubuntu-ami
       aws-ec2-type = var.t2-micro-1gib-1vcpu
+      subnet-ids = [module.aws-network-existing.subnet-by-name["subnet_2"].id]
       num = 0
     },
     "nfs" = {
       base-image = var.ubuntu-ami
       aws-ec2-type = var.t2-micro-1gib-1vcpu
+      subnet-ids = [module.aws-network-existing.subnet-by-name["subnet_4"].id]
       num = 1
     },
   }
@@ -74,6 +82,7 @@ module "aws-network-existing" {
   source                      = "./modules/aws-network-existing"
   default-vpc-name            = var.aws-existing-vpc-name
   default-security-group-name = var.aws-existing-sg-name
+  existing-subnet-names       = var.aws-existing-subnet-names
 }
 
 ################################################################################
@@ -88,11 +97,14 @@ resource "aws_key_pair" "key" {
   }
 }
 
+# resource "aws_ebs_volume" "zfs" {
+#   availability_zone =
+
 module "nodes" {
   for_each           = local.nodes-config
   source             = "./modules/aws-nodes"
   ami                = each.value.base-image
-  subnet-id          = module.aws-network-existing.k8s-subnets-ids[0]
+  subnet-ids         = each.value.subnet-ids
   security-group-ids = [module.aws-network-existing.default-sg.id]
   user-datas         = lookup(module.cloud-init-config, each.key, null).user-datas
   num-nodes          = each.value.num
@@ -114,7 +126,7 @@ module "nodes" {
 # provider "libvirt" {
 #   uri = var.libvirt-connection-url
 # }
-# 
+#
 # module "nodes" {
 #   for_each               = local.nodes-config
 #   source                 = "./modules/libvirt-nodes"
@@ -131,7 +143,7 @@ module "nodes" {
 #   libvirt-connection-url = var.libvirt-connection-url
 #   user-datas             = lookup(module.cloud-init-config, each.key, null).user-datas
 # }
-# 
+#
 # resource "libvirt_pool" "images" {
 #   name = var.disk-image-pool-name
 #   type = "dir"

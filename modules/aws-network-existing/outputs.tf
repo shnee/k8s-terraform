@@ -11,9 +11,14 @@ output "subnets" {
   value = data.aws_subnet.subnets
 }
 
-output "k8s-subnets-ids" {
-  description = "An array of subnets to be used for k8s VMs. These subnets were chosen by selecting a single subnet from each availability_zone."
+output "one-subnet-per-az" {
+  description = "An array of subnets that selects 1 subnet per az."
   value = [for k,v in local.az-to-subnets : v[0]]
+}
+
+output "subnet-by-name" {
+  description = "A map of subnet name to subnet resource."
+  value = data.aws_subnet.subnet-by-name
 }
 
 output "az-to-subnets" {

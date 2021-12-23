@@ -22,6 +22,14 @@ data "aws_subnet" "subnets" {
   id = each.key
 }
 
+data "aws_subnet" "subnet-by-name" {
+  for_each = toset(var.existing-subnet-names)
+  filter {
+    name   = "tag:Name"
+    values = [each.key]
+  }
+}
+
 data "aws_security_group" "default" {
   name = var.default-security-group-name
 }

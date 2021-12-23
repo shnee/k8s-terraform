@@ -14,6 +14,12 @@ variable "aws-existing-vpc-name" {
   description = "The name of the existing VPC when using aws-network-existing."
 }
 
+variable "aws-existing-subnet-names" {
+  description = "A list of subnet names that already exist in aws-existing-vpc-name"
+  default     = []
+  type        = list(string)
+}
+
 variable "aws-region" {
   default = "us-east-1"
   description = "The AWS region to use."
