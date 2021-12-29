@@ -9,3 +9,7 @@ output "private_ips" {
 output "names" {
   value = aws_instance.nodes.*.tags.Name
 }
+
+output "nodes" {
+  value = aws_instance.nodes
+}

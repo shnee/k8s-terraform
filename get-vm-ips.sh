@@ -84,13 +84,15 @@ for GROUP in $ANS_GROUPS; do
     # HOSTNAME1=0.0.0.0
     # HOSTNAME2=0.0.0.0
     VARS="$(
-        echo $DATA | \
+        echo -n $DATA | \
             jq '.[] | select(.group=="'"$GROUP"'") | .vms[] | 
                 "\(.hostname)=\(.ip)"' | \
             sed 's/"//g' | \
             sed "s/$VM_NAME_PREFIX-//g" | \
             sed 's/-/_/g'
         )"
-    # Print the contents of $VARS converted to uppercase.
-    echo "${VARS^^}"
+    # Print the contents of $VARS converted to uppercase. If it's not expty.
+    if [ ! -z $VARS ]; then
+        echo "${VARS^^}"
+    fi
 done

@@ -4,18 +4,21 @@ locals {
     module.aws-network-existing.subnet-by-name["subnet_1"].id,
     module.aws-network-existing.subnet-by-name["subnet_3"].id,
   ]
+  nfs-subnets = [
+    module.aws-network-existing.subnet-by-name["subnet_4"],
+  ]
   nodes-config = {
     "k8s-master" = {
       base-image = var.ubuntu-ami
       aws-ec2-type = var.t2-medium-4gib-2vcpu
       subnet-ids = local.k8s-subnets-ids
-      num = 1
+      num = 0
     },
     "k8s-worker" = {
       base-image = var.ubuntu-ami
       aws-ec2-type = var.t2-medium-4gib-2vcpu
       subnet-ids = local.k8s-subnets-ids
-      num = 2
+      num = 0
     },
     "ansible-test" = {
       base-image = var.ubuntu-ami
@@ -97,8 +100,21 @@ resource "aws_key_pair" "key" {
   }
 }
 
-# resource "aws_ebs_volume" "zfs" {
-#   availability_zone =
+resource "aws_ebs_volume" "zfs" {
+  # TODO REM look at types.
+  availability_zone = local.nfs-subnets[0].availability_zone
+  size = 10
+  encrypted = false
+  tags = {
+    Name = "zfs-disk"
+  }
+}
+
+resource "aws_volume_attachment" "mount-nfs-volume" {
+  device_name = "/dev/sdf"
+  instance_id = module.nodes["nfs"].nodes[0].id
+  volume_id = aws_ebs_volume.zfs.id
+}
 
 module "nodes" {
   for_each           = local.nodes-config
