@@ -21,6 +21,12 @@ variable "num-nodes" {
   type = number
 }
 
+variable "private-ips" {
+  default = []
+  description = "A list of private IP addresses to use for the nodes. If the list is empty then each node will get an IP assigned from AWS."
+  type = list(string)
+}
+
 variable "user-datas" {
   description = "A list of cloud-init configs that get applied to their corresponding node."
 }

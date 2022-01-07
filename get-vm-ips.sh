@@ -92,7 +92,7 @@ for GROUP in $ANS_GROUPS; do
             sed 's/-/_/g'
         )"
     # Print the contents of $VARS converted to uppercase. If it's not expty.
-    if [ ! -z $VARS ]; then
+    if [ ! -z "$VARS" ]; then
         echo "${VARS^^}"
     fi
 done

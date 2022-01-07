@@ -1,12 +1,16 @@
 
 locals {
   k8s-subnets-ids = [
+    # module.aws-network-from-scratch.subnet.id,
     module.aws-network-existing.subnet-by-name["subnet_1"].id,
     module.aws-network-existing.subnet-by-name["subnet_3"].id,
   ]
   nfs-subnets = [
+    # module.aws-network-from-scratch.subnet,
     module.aws-network-existing.subnet-by-name["subnet_4"],
   ]
+  aws-security-group-id = module.aws-network-existing.default-sg.id
+  # aws-security-group-id = module.aws-network-from-scratch.default-security-group.id
   nodes-config = {
     "k8s-master" = {
       base-image = var.ubuntu-ami
@@ -23,13 +27,25 @@ locals {
     "ansible-test" = {
       base-image = var.ubuntu-ami
       aws-ec2-type = var.t2-micro-1gib-1vcpu
+      # subnet-ids = [module.aws-network-from-scratch.subnet.id]
       subnet-ids = [module.aws-network-existing.subnet-by-name["subnet_2"].id]
       num = 0
     },
     "nfs" = {
       base-image = var.ubuntu-ami
       aws-ec2-type = var.t2-micro-1gib-1vcpu
+      # subnet-ids = [module.aws-network-from-scratch.subnet.id]
       subnet-ids = [module.aws-network-existing.subnet-by-name["subnet_4"].id]
+      num = 1
+      num-disks = 1
+      disk-size = 10
+    },
+    "proxy" = {
+      base-image = var.ubuntu-ami
+      aws-ec2-type = var.t2-micro-1gib-1vcpu
+      # subnet-ids = [module.aws-network-from-scratch.subnet.id]
+      subnet-ids = [module.aws-network-existing.subnet-by-name["subnet_4"].id]
+      private-ips = [var.aws-proxy-private-ip]
       num = 1
     },
   }
@@ -103,25 +119,33 @@ resource "aws_key_pair" "key" {
 resource "aws_ebs_volume" "zfs" {
   # TODO REM look at types.
   availability_zone = local.nfs-subnets[0].availability_zone
-  size = 10
-  encrypted = false
+  size = local.nodes-config["nfs"].disk-size
+  encrypted = true
+  count = local.nodes-config["nfs"].num-disks
   tags = {
-    Name = "zfs-disk"
+    Name = "zfs-disk-${count.index}"
   }
 }
 
 resource "aws_volume_attachment" "mount-nfs-volume" {
-  device_name = "/dev/sdf"
+  device_name = "/dev/sd${element(var.aws-zfs-drive-letters, count.index)}"
   instance_id = module.nodes["nfs"].nodes[0].id
-  volume_id = aws_ebs_volume.zfs.id
+  count = local.nodes-config["nfs"].num-disks
+  volume_id = element(aws_ebs_volume.zfs, count.index).id
+}
+
+output "zfs-drive-letters" {
+  value = aws_volume_attachment.mount-nfs-volume.*.device_name
 }
 
 module "nodes" {
   for_each           = local.nodes-config
   source             = "./modules/aws-nodes"
+  ec2-instance-type  = each.value.aws-ec2-type
   ami                = each.value.base-image
   subnet-ids         = each.value.subnet-ids
-  security-group-ids = [module.aws-network-existing.default-sg.id]
+  private-ips        = try(each.value.private-ips, [])
+  security-group-ids = [local.aws-security-group-id]
   user-datas         = lookup(module.cloud-init-config, each.key, null).user-datas
   num-nodes          = each.value.num
   name-prefix        = "${var.vm-name-prefix}-${each.key}"

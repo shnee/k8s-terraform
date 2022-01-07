@@ -4,13 +4,19 @@ variable "admin-ips" {
   type = list(string)
 }
 
+variable "aws-zfs-drive-letters" {
+  default     = ["f", "g", "h", "i", "j"]
+  description = "These are the drove letters to use when attaching EBS volumes, ie. /dev/sdf or /dev/sdg"
+  type        = list(string)
+}
+
 variable "aws-existing-sg-name" {
-  default = "change-me-if-using-aws-network-existing"
+  default     = "change-me-if-using-aws-network-existing"
   description = "The name of the existing security group when using aws-network-existing."
 }
 
 variable "aws-existing-vpc-name" {
-  default = "change-me-if-using-aws-network-existing"
+  default     = "change-me-if-using-aws-network-existing"
   description = "The name of the existing VPC when using aws-network-existing."
 }
 
@@ -18,6 +24,11 @@ variable "aws-existing-subnet-names" {
   description = "A list of subnet names that already exist in aws-existing-vpc-name"
   default     = []
   type        = list(string)
+}
+
+variable "aws-proxy-private-ip" {
+  description = "The private IP to request for the proxy instance."
+  type        = string
 }
 
 variable "aws-region" {

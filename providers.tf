@@ -1,20 +1,21 @@
 
 provider "aws" {
-  region = "us-gov-west-1"
+  region = var.aws-region
+  # profile = <aws cli profile>
 }
 
 
 terraform {
   required_version = ">= 1.0.8"
 
-    backend "s3" {
-      
-      bucket            = "mss-terraform-state"
-      key               = "global/s3/terraform.tfstate"
-      region            = "us-gov-west-1"
-      
-      dynamodb_table    = "mss-terraform-state-lock"
-      encrypt           = true
+  backend "s3" {
+    
+    bucket            = "mss-terraform-state"
+    key               = "global/s3/terraform.tfstate"
+    region            = "us-gov-west-1"
+    
+    dynamodb_table    = "mss-terraform-state-lock"
+    encrypt           = true
 
   }
   required_providers {
